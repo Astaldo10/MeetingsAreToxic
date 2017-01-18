@@ -1,0 +1,3 @@
+RewriteEngine On
+RedirectMatch 301 attendee/$ https://localhost/meetingsaretoxic/#/attendee/
+RedirectMatch 301 organizer/$ https://localhost/meetingsaretoxic/#/organizer/
