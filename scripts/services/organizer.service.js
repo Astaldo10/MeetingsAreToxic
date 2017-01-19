@@ -115,7 +115,7 @@
                 appointmentData.start = item.start;
                 appointmentData.end = item.end;
                 deferred.resolve(appointmentData);
-            });
+            }); // Add .catch(function (err){});
 
             return deferred.promise;
         

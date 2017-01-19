@@ -49,10 +49,9 @@
       <Host xsi:type="MailHost">
       
         <DesktopFormFactor>
-          <FunctionFile resid="funcFile"/>
-
+        
           <!-- Menu layout to display when reading a mail -->
-          <ExtensionPoint xsi:type="AppointmentAttendeeCommandSurface">
+          <ExtensionPoint xsi:type="MessageReadCommandSurface">
 
             <!-- Office tab menu, which contains buttons and task panes -->
             <OfficeTab id="TabDefault">
@@ -81,20 +80,50 @@
 
           </ExtensionPoint>
 
-          <!-- Menu layout to display when composing a mail -->
+          <!-- Menu layout to display when attending an appointment -->
+          <ExtensionPoint xsi:type="AppointmentAttendeeCommandSurface">
+
+            <!-- Office tab menu, which contains buttons and task panes -->
+            <OfficeTab id="TabDefault">
+              <Group id="attendingToxicity">
+                <Label resid="attendingToxicityLabel"/>
+
+                <!-- Reading toxicity checker on a TaskPane -->
+                <Control xsi:type="Button" id="attendingToxicityButton">
+                  <Label resid="attendingToxicityButtonLabel"/>
+                  <Supertip>
+                    <Title resid="attendingToxicityButtonTitle"/>
+                    <Description resid="attendingToxicityButtonDesc"/>
+                  </Supertip>
+                  <Icon>
+                    <bt:Image size="16" resid="taskpaneButtonIcon1-16"/>
+                    <bt:Image size="32" resid="taskpaneButtonIcon1-32"/>
+                    <bt:Image size="80" resid="taskpaneButtonIcon1-80"/>
+                  </Icon>
+                  <Action xsi:type="ShowTaskpane">
+                    <SourceLocation resid="attendingToxicityURL"/>
+                  </Action>
+                </Control>
+
+              </Group>
+            </OfficeTab>
+
+          </ExtensionPoint>
+
+          <!-- Menu layout to display when organizing an appointment -->
           <ExtensionPoint xsi:type="AppointmentOrganizerCommandSurface">
 
             <!-- Office tab menu, which contains buttons and task panes -->
             <OfficeTab id="TabDefault">
-              <Group id="composingToxicity">
-                <Label resid="composingToxicityLabel"/>
+              <Group id="organizingToxicity">
+                <Label resid="organizingToxicityLabel"/>
 
                 <!-- Composing toxicity checker on a TaskPane -->
-                <Control xsi:type="Button" id="composingToxicityButton">
-                  <Label resid="composingToxicityButtonLabel"/>
+                <Control xsi:type="Button" id="organizingToxicityButton">
+                  <Label resid="organizingToxicityButtonLabel"/>
                   <Supertip>
-                    <Title resid="composingToxicityButtonTitle"/>
-                    <Description resid="composingToxicityButtonDesc"/>
+                    <Title resid="organizingToxicityButtonTitle"/>
+                    <Description resid="organizingToxicityButtonDesc"/>
                   </Supertip>
                   <Icon>
                     <bt:Image size="16" resid="taskpaneButtonIcon3-16"/>
@@ -102,7 +131,7 @@
                     <bt:Image size="80" resid="taskpaneButtonIcon3-80"/>
                   </Icon>
                   <Action xsi:type="ShowTaskpane">
-                    <SourceLocation resid="composingToxicityURL"/>
+                    <SourceLocation resid="organizingToxicityURL"/>
                   </Action>
                 </Control>
 
@@ -126,20 +155,25 @@
         <bt:Image id="taskpaneButtonIcon3-80" DefaultValue="https://localhost/meetingsaretoxic/images/icon-80.png"/>
       </bt:Images>
       <bt:Urls>
-        <bt:Url id="readingToxicityURL" DefaultValue="https://localhost/meetingsaretoxic/attendee/"/>
-        <bt:Url id="composingToxicityURL" DefaultValue="https://localhost/meetingsaretoxic/organizer/"/>
+        <bt:Url id="readingToxicityURL" DefaultValue="https://localhost/meetingsaretoxic/reading/"/>
+        <bt:Url id="attendingToxicityURL" DefaultValue="https://localhost/meetingsaretoxic/attendee/"/>
+        <bt:Url id="organizingToxicityURL" DefaultValue="https://localhost/meetingsaretoxic/organizer/"/>
       </bt:Urls>
       <bt:ShortStrings>
         <bt:String id="readingToxicity" DefaultValue="Meetings are Toxic"/>
         <bt:String id="readingToxicityButton" DefaultValue="Reading Toxicity"/>
-        <bt:String id="readingToxicityButtonTitle" DefaultValue="Check this email toxicity!"/>
-        <bt:String id="composingToxicity" DefaultValue="Meetings are Toxic"/>
-        <bt:String id="composingToxicityButton" DefaultValue="Composing Toxicity"/>
-        <bt:String id="composingToxicityButtonTitle" DefaultValue="Check your email toxicity!"/>
+        <bt:String id="readingToxicityButtonTitle" DefaultValue="Check this appointment toxicity!"/>
+        <bt:String id="attendingToxicity" DefaultValue="Meetings are Toxic"/>
+        <bt:String id="attendingToxicityButton" DefaultValue="Attending Toxicity"/>
+        <bt:String id="attendingToxicityButtonTitle" DefaultValue="Check this appointment toxicity!"/>
+        <bt:String id="organizingToxicity" DefaultValue="Meetings are Toxic"/>
+        <bt:String id="organizingToxicityButton" DefaultValue="Organizing Toxicity"/>
+        <bt:String id="organizingToxicityButtonTitle" DefaultValue="Check your appointment toxicity!"/>
       </bt:ShortStrings>
       <bt:LongStrings>
-        <bt:String id="readingToxicityButtonDesc" DefaultValue="Check the email toxicity for every mail you receive."/>
-        <bt:String id="composingToxicityButtonDesc" DefaultValue="Check your email toxicity before sending it to try to be as clear as possible."/>
+        <bt:String id="attendingToxicityButtonDesc" DefaultValue="Check the appointment toxicity for every appointment you will receive."/>
+        <bt:String id="attendingToxicityButtonDesc" DefaultValue="Check the appointment toxicity for every appointment you will attend to."/>
+        <bt:String id="organizingToxicityButtonDesc" DefaultValue="Check your appointment toxicity before sending it to try to be as clear as possible."/>
       </bt:LongStrings>
     </Resources>
   </VersionOverrides>
