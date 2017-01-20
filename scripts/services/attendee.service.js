@@ -33,7 +33,7 @@
 
             var deferred = $q.defer();
             var item = itemCasterService.getReadItem(Office.context.mailbox.item);
-            var location;
+            var locations;
             var bodyDefer = $q.defer();
             var attendees = {
                 required: [],
@@ -42,9 +42,9 @@
 
             // Split the locations
             if (item.location !== ''){
-                location = item.location.split(';');
+                locations = item.location.split(';');
             } else {
-                location = [];
+                locations = [];
             }
 
             // Get the appointment description
@@ -67,7 +67,7 @@
                 deferred.resolve(
                     {
                         organizer: item.organizer.displayName,
-                        location: location,
+                        locations: locations,
                         subject: item.subject,
                         description: body,
                         attendees: attendees,

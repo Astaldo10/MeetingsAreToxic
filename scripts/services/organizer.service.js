@@ -33,12 +33,14 @@
 
             var deferred = $q.defer();
             var item = itemCasterService.getComposeItem(Office.context.mailbox.item);
-            var locationDefer = $q.defer();
+            var locationsDefer = $q.defer();
             var subjectDefer = $q.defer();
             var bodyDefer = $q.defer();
             var attendeesDefer = $q.defer();
             var requiredAttendeesDefer = $q.defer();
             var optionalAttendeesDefer = $q.defer();
+            var startDefer = $q.defer();
+            var endDefer = $q.defer();
             var attendeesData = {};
             var appointmentData = {};
 
@@ -46,9 +48,9 @@
             item.location.getAsync(function (result){
 
                 if (result.value !== ''){
-                    locationDefer.resolve(result.value.split(';'));
+                    locationsDefer.resolve(result.value.split(';'));
                 } else {
-                    locationDefer.resolve([]);
+                    locationsDefer.resolve([]);
                 }
 
             });
@@ -66,7 +68,7 @@
             // Get the required attendees names
             item.requiredAttendees.getAsync(function (result){
 
-                var attendees = [];
+                var attendees = [Office.context.mailbox.userProfile.displayName];
                 result.value.forEach(function(element) {
                     attendees.push(element.displayName);
                 }, this);
@@ -95,9 +97,19 @@
                 attendeesDefer.resolve(attendeesData);
             });
 
+            // Get the start date for the appointment
+            item.start.getAsync(function (result){
+                startDefer.resolve(result.value);
+            });
+
+            // Get the end date for the appointment
+            item.end.getAsync(function (result){
+                endDefer.resolve(result.value);
+            });
+
             // Chain the promises to return the whole data
-            locationDefer.promise.then(function (location){
-                appointmentData.location = location;
+            locationsDefer.promise.then(function (locations){
+                appointmentData.locations = locations;
                 return subjectDefer.promise;
             })
             .then(function (subject){
@@ -110,10 +122,16 @@
             })
             .then(function (attendees){
                 appointmentData.attendees = attendees;
+                return startDefer.promise;
+            })
+            .then(function (start){
+                appointmentData.start = start;
+                return endDefer.promise;
+            })
+            .then(function (end){
+                appointmentData.end = end;
                 appointmentData.organizer = Office.context.mailbox.userProfile.displayName;
-                appointmentData.created = item.dateTimeCreated;
-                appointmentData.start = item.start;
-                appointmentData.end = item.end;
+                appointmentData.created = new Date();
                 deferred.resolve(appointmentData);
             }); // Add .catch(function (err){});
 

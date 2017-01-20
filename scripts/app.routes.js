@@ -17,6 +17,12 @@
             templateUrl: 'templates/toxicity.html',
             controller: 'ToxicityController as tc',
             params: { serviceType: 'attendee' }   
+        })
+        .state('reading', {
+            url: '/reading/',
+            templateUrl: 'templates/toxicity.html',
+            controller: 'ToxicityController as tc',
+            params: { serviceType: 'reading' }   
         });
     }]);
 

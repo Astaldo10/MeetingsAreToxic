@@ -25,19 +25,15 @@
 
         // Gets the mail data, for example, the priority or the email sender direction
         service.getMailData().then(function(response){
-          
             mail = response;
-
-            // Gets the appointment data, for example, when it was created or the attendees
-            service.getAppointmentData().then(function(response){
-
-                appointment = response;
-
-                // Gets the toxicity score and its factors
-                ctrl.score = scoring.score(mail, appointment);
-                
-            });
-        });
+            return service.getAppointmentData();
+        })
+        // Gets the appointment data, for example, when it was created or the attendees
+        .then(function(response){
+            appointment = response;
+            // Gets the toxicity score and its factors
+            ctrl.score = scoring.score(mail, appointment);
+        }); // Add .catch()
 
 
         // Gets the toxicity background according to the toxicity level reached
