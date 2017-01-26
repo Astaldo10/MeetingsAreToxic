@@ -3,11 +3,11 @@
     'use strict';
 
     angular.module('officeAddin').controller('ToxicityController',
-        ['toxicityService', '$stateParams', toxicityController]);
+        ['toxicityService', toxicityController]);
 
 
     // Application controller
-    function toxicityController (service, $stateParams){
+    function toxicityController (service){
 
         var ctrl = this;  // jshint ignore:line
 
