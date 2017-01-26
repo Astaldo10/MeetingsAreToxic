@@ -16,14 +16,24 @@
         var appointment = {};
         ctrl.score = {};
         ctrl.getBackground = getToxicityBackground;
+        ctrl.isAppointment = undefined;
 
-        service.getEmailInfo().then(function (response){
-            email = response;
-            return service.getAppointmentData();
-        }).then(function (response){
-            appointment = response;
-            ctrl.score = scoring.score(email, appointment);
+        service.isAppointment().then(function (result){
+
+            ctrl.isAppointment = result;
+
+            if (result){
+                service.getEmailInfo().then(function (response){
+                    email = response;
+                    return service.getAppointmentData();
+                }).then(function (response){
+                    appointment = response;
+                    ctrl.score = scoring.score(email, appointment);
+                });
+            }
         });
+
+        
 
         // Gets the toxicity background according to the toxicity level reached
         function getToxicityBackground (){

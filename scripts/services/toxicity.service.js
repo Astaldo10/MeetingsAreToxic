@@ -30,14 +30,12 @@
                 type = CALENDAR_ITEM;
 
             }
-
-            console.log(email);
-
         });
 
         return {
             getEmailInfo: getEmailInfo,
-            getAppointmentData: getAppointmentData
+            getAppointmentData: getAppointmentData,
+            isAppointment: isAppointment
         };
 
 
@@ -134,6 +132,19 @@
 
             return deferred.promise;
           
+        }
+
+
+        function isAppointment (){
+
+            var deferred = $q.defer();
+
+            emailPromise.then(function (){
+                deferred.resolve(type === MEETING_REQUEST);
+            });
+
+            return deferred.promise;
+
         }
 
 

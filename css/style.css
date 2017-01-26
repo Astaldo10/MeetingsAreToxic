@@ -29,6 +29,10 @@ html {
     font-weight: bold;
 }
 
+#not-meeting-response {
+    padding: 20px 40px;
+}
+
 /* Backgrounds */
 .green {
     background-color: #3bad37;
