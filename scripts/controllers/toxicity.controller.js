@@ -16,7 +16,7 @@
         var appointment = {};
         ctrl.score = {};
         ctrl.getBackground = getToxicityBackground;
-        ctrl.isAppointment = undefined;
+        ctrl.isAppointment = true;
 
         service.isAppointment().then(function (result){
 
