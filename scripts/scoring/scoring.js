@@ -16,9 +16,9 @@ var scoring = (function(){
         console.log('attendees:', event.attendees);
         console.log('created:', event.created);
         console.log('start:', event.start);
-        console.log('end:', event.end);*/
-        /*console.log(event.getPropertyValue('SUMMARY'));
-        console.log(event.getPropertyValue('RRULE'));*/
+        console.log('end:', event.end);
+        //console.log(event.getPropertyValue('SUMMARY'));
+        console.log('recurring': event.recurring);*/
 
         var result = {
             toxicity: 0,
@@ -54,7 +54,7 @@ var scoring = (function(){
         if (attendeeCount > 10) {
             result.factors.push({
                 toxicity: 200,
-                description: 'More than 10 people in a meeting? RUN. NOW.'
+                description: 'More than 10 people in a meeting? RUN. NOW'
             });
         } else if (attendeeCount > 4) {
             result.factors.push({
@@ -68,8 +68,7 @@ var scoring = (function(){
             });
         }
 
-        /*var recurring = event.getPropertyValue('RRULE');
-        if (recurring) {
+        if (event.recurring) {
             result.factors.push({
                 toxicity: 5,
                 description: 'Recurring meetings can often be replaced by an email'
@@ -77,9 +76,9 @@ var scoring = (function(){
         } else {
             result.factors.push({
                 toxicity: -5,
-                description: 'Recurring meetings are often useless. This one looks good.'
+                description: 'Recurring meetings are often useless. This one looks good'
             });
-        }*/
+        }
 
         if (event.start - event.created < 24 * 60 * 60 * 1000) {
             result.factors.push({
@@ -106,7 +105,7 @@ var scoring = (function(){
                 toxicity: -5,
                 description: 'Short meetings make you come to the meeting prepared'
             });
-        }
+        } // What happens between (30 * 60 * 1000) and (40 * 60 * 1000)?
 
         // TODO ORGANIZER historic data
         // TODO WEIRD HOURS (MEAL, WORKING HOURS, ETC)

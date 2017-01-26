@@ -2,39 +2,28 @@
 
     'use strict';
 
-    angular.module('officeAddin').controller('ToxicityController', ['attendeeService', 'organizerService', '$stateParams', attendeeController]);
+    angular.module('officeAddin').controller('ToxicityController',
+        ['toxicityService', '$stateParams', toxicityController]);
 
 
     // Application controller
-    function attendeeController (attendeeService, organizerService, $stateParams){
+    function toxicityController (service, $stateParams){
 
         var ctrl = this;  // jshint ignore:line
-        var service;
 
         // Controller data sets
-        var mail = {};
+        var email = {};
         var appointment = {};
         ctrl.score = {};
         ctrl.getBackground = getToxicityBackground;
 
-        if ($stateParams.serviceType === 'attendee'){
-            service = attendeeService;
-        } else if ($stateParams.serviceType === 'organizer'){
-            service = organizerService;
-        }
-
-        // Gets the mail data, for example, the priority or the email sender direction
-        service.getMailData().then(function(response){
-            mail = response;
+        service.getEmailInfo().then(function (response){
+            email = response;
             return service.getAppointmentData();
-        })
-        // Gets the appointment data, for example, when it was created or the attendees
-        .then(function(response){
+        }).then(function (response){
             appointment = response;
-            // Gets the toxicity score and its factors
-            ctrl.score = scoring.score(mail, appointment);
-        }); // Add .catch()
-
+            ctrl.score = scoring.score(email, appointment);
+        });
 
         // Gets the toxicity background according to the toxicity level reached
         function getToxicityBackground (){

@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="MailApp" xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0">
+
+  <Id>4c3a82e1-c124-4b56-84bb-614e855d77d7</Id>
+  <Version>0.0.1.0</Version>
+  <ProviderName>Eleven Paths</ProviderName>
+  <DefaultLocale>en-GB</DefaultLocale>
+  <DisplayName DefaultValue="Meetings are Toxic (Buttons version)"/>
+  <Description DefaultValue="Check your mails toxicity level before set up a meeting!"/>
+  <IconUrl DefaultValue="https://localhost/meetingsaretoxic/images/icon-32.png"/>
+  <HighResolutionIconUrl DefaultValue="https://localhost/meetingsaretoxic/images/hi-res-icon.png"/>
+
+  <Hosts>
+    <Host Name="Mailbox"/>
+  </Hosts>
+
+  <Requirements>
+    <Sets>
+      <Set Name="MailBox" MinVersion="1.1"/>
+    </Sets>
+  </Requirements>
+
+  <FormSettings>
+
+    <Form xsi:type="ItemRead">
+      <DesktopSettings>
+        <SourceLocation DefaultValue="https://localhost/meetingsaretoxic/attendee/"/>
+        <RequestedHeight>250</RequestedHeight>
+      </DesktopSettings>
+    </Form>
+
+    <Form xsi:type="ItemEdit">
+      <DesktopSettings>
+       <SourceLocation DefaultValue="https://localhost/meetingsaretoxic/organizer/"/>
+      </DesktopSettings>
+    </Form>
+
+  </FormSettings>
+
+  <Permissions>ReadWriteMailbox</Permissions>
+
+  <Rule xsi:type="RuleCollection" Mode="Or">
+    <Rule xsi:type="ItemIs" ItemType="Message" FormType="Read"/>
+    <Rule xsi:type="ItemIs" ItemType="Appointment" FormType="ReadOrEdit"/>
+  </Rule>
+
+  <DisableEntityHighlighting>false</DisableEntityHighlighting>
+
+  <VersionOverrides xmlns="http://schemas.microsoft.com/office/mailappversionoverrides" xsi:type="VersionOverridesV1_0">
+    <Hosts>
+      <Host xsi:type="MailHost">
+      
+        <DesktopFormFactor>
+        
+          <!-- Menu layout to display when reading a mail -->
+          <ExtensionPoint xsi:type="MessageReadCommandSurface">
+
+            <!-- Office tab menu, which contains buttons and task panes -->
+            <OfficeTab id="TabDefault">
+              <Group id="readingToxicity">
+                <Label resid="readingToxicityLabel"/>
+
+                <!-- Reading toxicity checker on a TaskPane -->
+                <Control xsi:type="Button" id="readingToxicityButton">
+                  <Label resid="readingToxicityButtonLabel"/>
+                  <Supertip>
+                    <Title resid="readingToxicityButtonTitle"/>
+                    <Description resid="readingToxicityButtonDesc"/>
+                  </Supertip>
+                  <Icon>
+                    <bt:Image size="16" resid="taskpaneButtonIcon1-16"/>
+                    <bt:Image size="32" resid="taskpaneButtonIcon1-32"/>
+                    <bt:Image size="80" resid="taskpaneButtonIcon1-80"/>
+                  </Icon>
+                  <Action xsi:type="ShowTaskpane">
+                    <SourceLocation resid="readingToxicityURL"/>
+                  </Action>
+                </Control>
+
+              </Group>
+            </OfficeTab>
+
+          </ExtensionPoint>
+
+          <!-- Menu layout to display when attending an appointment -->
+          <ExtensionPoint xsi:type="AppointmentAttendeeCommandSurface">
+
+            <!-- Office tab menu, which contains buttons and task panes -->
+            <OfficeTab id="TabDefault">
+              <Group id="attendingToxicity">
+                <Label resid="attendingToxicityLabel"/>
+
+                <!-- Reading toxicity checker on a TaskPane -->
+                <Control xsi:type="Button" id="attendingToxicityButton">
+                  <Label resid="attendingToxicityButtonLabel"/>
+                  <Supertip>
+                    <Title resid="attendingToxicityButtonTitle"/>
+                    <Description resid="attendingToxicityButtonDesc"/>
+                  </Supertip>
+                  <Icon>
+                    <bt:Image size="16" resid="taskpaneButtonIcon1-16"/>
+                    <bt:Image size="32" resid="taskpaneButtonIcon1-32"/>
+                    <bt:Image size="80" resid="taskpaneButtonIcon1-80"/>
+                  </Icon>
+                  <Action xsi:type="ShowTaskpane">
+                    <SourceLocation resid="attendingToxicityURL"/>
+                  </Action>
+                </Control>
+
+              </Group>
+            </OfficeTab>
+
+          </ExtensionPoint>
+
+          <!-- Menu layout to display when organizing an appointment -->
+          <ExtensionPoint xsi:type="AppointmentOrganizerCommandSurface">
+
+            <!-- Office tab menu, which contains buttons and task panes -->
+            <OfficeTab id="TabDefault">
+              <Group id="organizingToxicity">
+                <Label resid="organizingToxicityLabel"/>
+
+                <!-- Composing toxicity checker on a TaskPane -->
+                <Control xsi:type="Button" id="organizingToxicityButton">
+                  <Label resid="organizingToxicityButtonLabel"/>
+                  <Supertip>
+                    <Title resid="organizingToxicityButtonTitle"/>
+                    <Description resid="organizingToxicityButtonDesc"/>
+                  </Supertip>
+                  <Icon>
+                    <bt:Image size="16" resid="taskpaneButtonIcon3-16"/>
+                    <bt:Image size="32" resid="taskpaneButtonIcon3-32"/>
+                    <bt:Image size="80" resid="taskpaneButtonIcon3-80"/>
+                  </Icon>
+                  <Action xsi:type="ShowTaskpane">
+                    <SourceLocation resid="organizingToxicityURL"/>
+                  </Action>
+                </Control>
+
+              </Group>
+            </OfficeTab>
+
+          </ExtensionPoint>
+        </DesktopFormFactor>
+
+      </Host>
+    </Hosts>
+
+    <!-- Change -->
+    <Resources>
+      <bt:Images>
+        <bt:Image id="taskpaneButtonIcon1-16" DefaultValue="https://localhost/meetingsaretoxic/images/icon-16.png"/>
+        <bt:Image id="taskpaneButtonIcon1-32" DefaultValue="https://localhost/meetingsaretoxic/images/icon-32.png"/>
+        <bt:Image id="taskpaneButtonIcon1-80" DefaultValue="https://localhost/meetingsaretoxic/images/icon-80.png"/>
+        <bt:Image id="taskpaneButtonIcon3-16" DefaultValue="https://localhost/meetingsaretoxic/images/icon-16.png"/>
+        <bt:Image id="taskpaneButtonIcon3-32" DefaultValue="https://localhost/meetingsaretoxic/images/icon-32.png"/>
+        <bt:Image id="taskpaneButtonIcon3-80" DefaultValue="https://localhost/meetingsaretoxic/images/icon-80.png"/>
+      </bt:Images>
+      <bt:Urls>
+        <bt:Url id="readingToxicityURL" DefaultValue="https://localhost/meetingsaretoxic/reading/"/>
+        <bt:Url id="attendingToxicityURL" DefaultValue="https://localhost/meetingsaretoxic/attendee/"/>
+        <bt:Url id="organizingToxicityURL" DefaultValue="https://localhost/meetingsaretoxic/organizer/"/>
+      </bt:Urls>
+      <bt:ShortStrings>
+        <bt:String id="readingToxicity" DefaultValue="Meetings are Toxic"/>
+        <bt:String id="readingToxicityButton" DefaultValue="Reading Toxicity"/>
+        <bt:String id="readingToxicityButtonTitle" DefaultValue="Check this appointment toxicity!"/>
+        <bt:String id="attendingToxicity" DefaultValue="Meetings are Toxic"/>
+        <bt:String id="attendingToxicityButton" DefaultValue="Attending Toxicity"/>
+        <bt:String id="attendingToxicityButtonTitle" DefaultValue="Check this appointment toxicity!"/>
+        <bt:String id="organizingToxicity" DefaultValue="Meetings are Toxic"/>
+        <bt:String id="organizingToxicityButton" DefaultValue="Organizing Toxicity"/>
+        <bt:String id="organizingToxicityButtonTitle" DefaultValue="Check your appointment toxicity!"/>
+      </bt:ShortStrings>
+      <bt:LongStrings>
+        <bt:String id="attendingToxicityButtonDesc" DefaultValue="Check the appointment toxicity for every appointment you will receive."/>
+        <bt:String id="attendingToxicityButtonDesc" DefaultValue="Check the appointment toxicity for every appointment you will attend to."/>
+        <bt:String id="organizingToxicityButtonDesc" DefaultValue="Check your appointment toxicity before sending it to try to be as clear as possible."/>
+      </bt:LongStrings>
+    </Resources>
+  </VersionOverrides>
+</OfficeApp>
