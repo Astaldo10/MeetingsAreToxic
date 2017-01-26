@@ -30,6 +30,9 @@
                 type = CALENDAR_ITEM;
 
             }
+
+            console.log(email);
+
         });
 
         return {
@@ -113,7 +116,7 @@
                 if (type === CALENDAR_ITEM){ attendees.required.push(email.Organizer.Mailbox.__text); }
 
                 // Check meeting recurrence
-                if (email.Recurrence) { recurring = true; }
+                if (email.IsRecurring.__text === 'true') { recurring = true; }
 
                 deferred.resolve({
                     organizer: email.Organizer.Mailbox.Name.__text,
