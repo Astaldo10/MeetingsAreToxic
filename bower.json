@@ -1,11 +1,9 @@
 {
   "name": "toxicity-checker",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "dependencies": {
     "microsoft.office.js": "*",
     "angular": "~1.4.4",
-    "angular-route": "~1.4.4",
-    "angular-sanitize": "~1.4.4",
     "office-ui-fabric": "*",
     "angular-xml": "*"
   }
