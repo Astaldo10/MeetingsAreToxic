@@ -140,7 +140,7 @@
             var deferred = $q.defer();
 
             emailPromise.then(function (){
-                deferred.resolve(type === MEETING_REQUEST);
+                deferred.resolve(type === MEETING_REQUEST || type === CALENDAR_ITEM);
             });
 
             return deferred.promise;
