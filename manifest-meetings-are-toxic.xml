@@ -25,7 +25,7 @@
     <Form xsi:type="ItemRead">
       <DesktopSettings>
         <SourceLocation DefaultValue="https://localhost/meetingsaretoxic/"/>
-        <RequestedHeight>250</RequestedHeight>
+        <RequestedHeight>300</RequestedHeight>
       </DesktopSettings>
     </Form>
 
