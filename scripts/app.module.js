@@ -9,6 +9,12 @@
         if ($logProvider.debugEnabled) {
             $logProvider.debugEnabled(true);
         }
-    }]);
+    }])
+    // Add the toxicity directive
+    .directive('toxicity', function (){
+        return {
+            templateUrl: 'templates/toxicity.html'
+        };
+    });
 
 })();

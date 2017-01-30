@@ -1,49 +1,32 @@
 <!DOCTYPE html>
 <html>
-
   <head>
+
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title></title>
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
 
-    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular.min.js"></script>
-    <!-- <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular-route.min.js"></script> -->
-    <script src="//unpkg.com/angular-ui-router/release/angular-ui-router.min.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular-sanitize.min.js"></script>
-    <link href="//appsforoffice.microsoft.com/fabric/1.0/fabric.min.css" rel="stylesheet">
-    <!--<link href="//appsforoffice.microsoft.com/fabric/1.0/fabric.components.min.css" rel="stylesheet">-->
     <script src="//appsforoffice.microsoft.com/lib/1/hosted/Office.js"></script>
-
-    <!-- To enable offline debugging using a local reference to Angular-*.js & Office.js, use: -->
-    <!-- <script src="bower_components/angular/angular.min.js"></script>
-    <script src="bower_components/angular-route/angular-route.min.js"></script>
-    <script src="bower_components/angular-sanitize/angular-sanitize.min.js"></script>
-    <script src="bower_components/microsoft.office.js/scripts/office/1/office.js"></script> -->
-    <!-- <script src="../content/fabric.min.css"></script>
-    <script src="../content/fabric.components.min.css"></script>
-    <script src="../scripts/jquery.fabric.min.js"></script> -->
+    <script src="bower_components/x2js/xml2json.min.js"></script>
+    <script src="bower_components/angular/angular.min.js"></script>
+    <script src="bower_components/angular-xml/angular-xml.min.js"></script>
 
     <link href="bower_components/microsoft.office.js/content/officethemes.css" rel="stylesheet" type="text/css" />
     <link href="css/Office.css" rel="stylesheet" type="text/css" />
     <link href="css/style.css" rel="stylesheet" type="text/css" />
-  </head>
+    <link href="css/fabric.min.css" rel="stylesheet" type="text/css" />
+    <link href="css/fabric.components.min.css" rel="stylesheet" type="text/css" />
 
+  </head>
   <body>
 
-    <div id="container">
-      <div ui-view></div>
-    </div>
+    <div id="container" toxicity></div>
 
     <script src="scripts/scoring/scoring.js"></script>
     <script src="scripts/app.js"></script>
-    <script src="scripts/app.routes.js"></script>
     <script src="scripts/app.module.js"></script>
-    <script src="scripts/services/attendee.service.js"></script>
-    <script src="scripts/services/organizer.service.js"></script>
-    <script src="scripts/services/itemcaster.service.js"></script>
+    <script src="scripts/services/toxicity.service.js"></script>
     <script src="scripts/controllers/toxicity.controller.js"></script>
 
   </body>
-
 </html>

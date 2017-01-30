@@ -2,43 +2,38 @@
 
     'use strict';
 
-    angular.module('officeAddin').controller('ToxicityController', ['attendeeService', 'organizerService', '$stateParams', attendeeController]);
+    angular.module('officeAddin').controller('ToxicityController',
+        ['toxicityService', toxicityController]);
 
 
     // Application controller
-    function attendeeController (attendeeService, organizerService, $stateParams){
+    function toxicityController (service){
 
         var ctrl = this;  // jshint ignore:line
-        var service;
 
         // Controller data sets
-        var mail = {};
+        var email = {};
         var appointment = {};
         ctrl.score = {};
         ctrl.getBackground = getToxicityBackground;
+        ctrl.isAppointment = true;
 
-        if ($stateParams.serviceType === 'attendee'){
-            service = attendeeService;
-        } else if ($stateParams.serviceType === 'organizer'){
-            service = organizerService;
-        }
+        service.isAppointment().then(function (result){
 
-        // Gets the mail data, for example, the priority or the email sender direction
-        service.getMailData().then(function(response){
-          
-            mail = response;
+            ctrl.isAppointment = result;
 
-            // Gets the appointment data, for example, when it was created or the attendees
-            service.getAppointmentData().then(function(response){
-
-                appointment = response;
-
-                // Gets the toxicity score and its factors
-                ctrl.score = scoring.score(mail, appointment);
-                
-            });
+            if (result){
+                service.getEmailInfo().then(function (response){
+                    email = response;
+                    return service.getAppointmentData();
+                }).then(function (response){
+                    appointment = response;
+                    ctrl.score = scoring.score(email, appointment);
+                });
+            }
         });
 
+        
 
         // Gets the toxicity background according to the toxicity level reached
         function getToxicityBackground (){

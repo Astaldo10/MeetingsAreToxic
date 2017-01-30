@@ -1,6 +1,16 @@
-<div id="toxicity" class="ms-font-xxl ms-fontWeight-light" ng-class="tc.getBackground()">
-    <p>TOXICITY LEVEL: {{ tc.score.toxicity }}</p>
+<div ng-controller="ToxicityController as tc">
+    <div ng-show="tc.isAppointment">
+        <div id="toxicity" class="ms-font-xxl ms-fontWeight-light" ng-class="tc.getBackground()">
+            <p>TOXICITY LEVEL: {{ tc.score.toxicity }}</p>
+        </div>
+        <ol id="factors" class="ms-font-l">
+            <li ng-repeat="factor in tc.score.factors">{{ factor.description }}: <span>{{ factor.toxicity }} points</span></li>
+        </ol>
+    </div>
+    <div ng-hide="tc.isAppointment">
+        <div id="toxicity" class="ms-font-xxl ms-fontWeight-light green">
+            <p>TOXICITY LEVEL: 0</p>
+        </div>
+        <div id="not-meeting-response" class="ms-font-l">This message is not a meeting request.</div>
+    </div>
 </div>
-<ol id="factors" class="ms-font-l">
-    <li ng-repeat="factor in tc.score.factors">{{ factor.description }}: <span>{{ factor.toxicity }} points</span></li>
-</ol>
