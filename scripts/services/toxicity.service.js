@@ -88,8 +88,8 @@
 
             emailPromise.then(function (){
 
-                var attendees = { required: [], optional: [] }
-                var locations, subject, description, recurring;
+                var attendees = { required: [], optional: [] };
+                var locations, subject, description;
 
                 // Split the locations
                 if (email.Location.__text && email.Location.__text !== ''){
@@ -113,19 +113,17 @@
                 // If the item is a CalendarItem, the organizer is not included in any attendees group. Add him
                 if (type === CALENDAR_ITEM){ attendees.required.push(email.Organizer.Mailbox.__text); }
 
-                // Check meeting recurrence
-                if (email.IsRecurring.__text === 'true') { recurring = true; }
-
                 deferred.resolve({
                     organizer: email.Organizer.Mailbox.Name.__text,
                     locations: locations,
                     subject: subject,
+                    online: email.IsOnlineMeeting.__text === 'true',
                     description: description,
                     attendees: attendees,
                     created: new Date(email.DateTimeCreated.__text),
                     start: new Date(email.Start.__text),
                     end: new Date(email.End.__text),
-                    recurring: recurring
+                    recurring: email.IsRecurring.__text === 'true'
                 });
 
             });
@@ -150,35 +148,46 @@
 
         function getMessageRequest (messageId){
 
-            return '<GetItem xmlns="http://schemas.microsoft.com/exchange/services/2006/messages">' +
-            '   <ItemShape>' +
-            '       <t:BaseShape>AllProperties</t:BaseShape>' +
-            /*'       <t:AdditionalProperties>' +
-            '           <t:FieldURI FieldURI="item:Subject"/>' +
-            '       </t:AdditionalProperties>' +*/
-            '   </ItemShape>' +
-            '   <ItemIds><t:ItemId Id="' + messageId + '"/></ItemIds>' +
-            '</GetItem>';
+            return  '<GetItem xmlns="http://schemas.microsoft.com/exchange/services/2006/messages">' +
+                    '   <ItemShape>' +
+                    '       <t:BaseShape>IdOnly</t:BaseShape>' +
+                    '       <t:AdditionalProperties>' +
+                    '           <t:FieldURI FieldURI="calendar:Organizer"/>' +
+                    '           <t:FieldURI FieldURI="calendar:Location"/>' +
+                    '           <t:FieldURI FieldURI="calendar:IsOnlineMeeting"/>' +
+                    '           <t:FieldURI FieldURI="calendar:RequiredAttendees"/>' +
+                    '           <t:FieldURI FieldURI="calendar:OptionalAttendees"/>' +
+                    '           <t:FieldURI FieldURI="calendar:Start"/>' +
+                    '           <t:FieldURI FieldURI="calendar:End"/>' +
+                    '           <t:FieldURI FieldURI="calendar:IsRecurring"/>' +
+                    '           <t:FieldURI FieldURI="item:Subject"/>' +
+                    '           <t:FieldURI FieldURI="item:Body"/>' +
+                    '           <t:FieldURI FieldURI="item:DateTimeCreated"/>' +
+                    '           <t:FieldURI FieldURI="item:Importance"/>' +
+                    '       </t:AdditionalProperties>' +
+                    '   </ItemShape>' +
+                    '   <ItemIds><t:ItemId Id="' + messageId + '"/></ItemIds>' +
+                    '</GetItem>';
 
         }
 
 
         function getRequestEnvelope (request){
 
-            return '<?xml version="1.0" encoding="utf-8"?>' +
-            '<soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"' +
-            '               xmlns:xsd="http://www.w3.org/2001/XMLSchema"' +
-            '               xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"' +
-            '               xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types">' +
-            '   <soap:Header>' +
-            '       <t:RequestServerVersion Version="Exchange2013"/>' +
-            '   </soap:Header>' +
-            '   <soap:Body>' +
+            return  '<?xml version="1.0" encoding="utf-8"?>' +
+                    '<soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"' +
+                    '               xmlns:xsd="http://www.w3.org/2001/XMLSchema"' +
+                    '               xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"' +
+                    '               xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types">' +
+                    '   <soap:Header>' +
+                    '       <t:RequestServerVersion Version="Exchange2013"/>' +
+                    '   </soap:Header>' +
+                    '   <soap:Body>' +
 
-            request +
+                    request +
 
-            '   </soap:Body>' +
-            '</soap:Envelope>';
+                    '   </soap:Body>' +
+                    '</soap:Envelope>';
 
         }
 

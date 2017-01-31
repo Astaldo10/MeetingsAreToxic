@@ -6,19 +6,8 @@ var scoring = (function(){
 
     'use strict';
 
-    function score (mail, event) {
 
-        /*console.log('from:', mail.from);
-        console.log('priority:', mail.priority);
-        console.log('organizer:', event.organizer);
-        console.log('locations:', event.locations);
-        console.log('description:', event.description);
-        console.log('attendees:', event.attendees);
-        console.log('created:', event.created);
-        console.log('start:', event.start);
-        console.log('end:', event.end);
-        //console.log(event.getPropertyValue('SUMMARY'));
-        console.log('recurring': event.recurring);*/
+    function score (mail, event) {
 
         var result = {
             toxicity: 0,
@@ -27,16 +16,28 @@ var scoring = (function(){
 
         // XXX proper statistical analysis
 
-        if (event.locations) {
-            var locationsCount = event.locations.length;
+        // Location
+        var locationsCount = event.locations.length;
+        if (event.online){
+            result.factors.push({
+                toxicity: -5,
+                description: 'Online meetings are faster than face to face ones'
+            });     
+        } else if (locationsCount > 0) {
             if (locationsCount > 1) {
                 result.factors.push({
                     toxicity: locationsCount * 5,
                     description: 'Meeting that involve multiple locations (' + locationsCount + ') are usually less productive'
                 });
             }
-        } // If there isn't any location, should that be a toxicity indicator?
+        } else {
+            result.factors.push({
+                toxicity: 20,
+                description: 'People will get lost if they do not know where the meeting will be'
+            });
+        }
 
+        // Description
         if (!event.description) {
             result.factors.push({
                 toxicity: 15,
@@ -49,7 +50,7 @@ var scoring = (function(){
             });
         }
 
-        // What about optional attendees?
+        // Attendees
         var attendeeCount = event.attendees.required.length;
         if (attendeeCount > 10) {
             result.factors.push({
@@ -68,6 +69,14 @@ var scoring = (function(){
             });
         }
 
+        if (event.attendees.optional.length > 0){
+            result.factors.push({
+                toxicity: -20,
+                description: 'It is nice to be polite and allow optional attendees.'
+            });
+        }
+
+        // Recurring
         if (event.recurring) {
             result.factors.push({
                 toxicity: 5,
@@ -80,6 +89,7 @@ var scoring = (function(){
             });
         }
 
+        // Start time
         if (event.start - event.created < 24 * 60 * 60 * 1000) {
             result.factors.push({
                 toxicity: 5,
@@ -87,6 +97,7 @@ var scoring = (function(){
             });
         }
 
+        // Duration
         var duration = event.end - event.start;
         if (duration > 40 * 60 * 1000) {
             if (duration > 60 * 60 * 1000) {
@@ -105,7 +116,34 @@ var scoring = (function(){
                 toxicity: -5,
                 description: 'Short meetings make you come to the meeting prepared'
             });
-        } // What happens between (30 * 60 * 1000) and (40 * 60 * 1000)?
+        }
+
+        // Day of week
+        var dayOfWeek = event.start.getUTCDay();
+        if (dayOfWeek === 5 || dayOfWeek === 6){ // Saturday or Sunday
+            result.factors.push({
+                toxicity: 30,
+                description: 'Who the hell convene sets up a meeting on weekend?'
+            });
+        }
+
+        // Work and lunch time
+
+        // Subject
+        var subject = event.subject.toLowerCase();
+        if (subject.includes('seguimiento') || subject.includes('follow up')){
+            result.factors.push({
+                toxicity: 30,
+                description: 'Send a god dammit email'
+            });
+        }
+
+        if (subject.length < 3){
+            result.factors.push({
+                toxicity: 5,
+                description: 'Short subjects are not very descriptive'
+            });
+        }
 
         // TODO ORGANIZER historic data
         // TODO WEIRD HOURS (MEAL, WORKING HOURS, ETC)
@@ -114,6 +152,7 @@ var scoring = (function(){
         return result;
 
     }
+
 
     function cost(mail, event) {
 
@@ -130,6 +169,7 @@ var scoring = (function(){
             attendees: attendeeCount
         };
     }
+
 
     return {
         score: score,
