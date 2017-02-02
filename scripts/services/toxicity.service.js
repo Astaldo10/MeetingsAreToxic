@@ -6,30 +6,48 @@
     var MEETING_REQUEST = 0,
         CALENDAR_ITEM = 1;
 
-    angular.module('officeAddin').service('toxicityService', ['$q', 'x2js', messageService]);
+    angular.module('OfficeAddin').service('ToxicityService', ['$q', 'RequestsService', messageService]);
 
 
     // Service which controls the data obtention when attending an appointment
-    function messageService ($q, x2js){
+    function messageService ($q, RequestsService){
 
-        var emailPromise, email, type;
+        var message, type, messagePromise = getMessage(), contactsCulturePromise = RequestsService.getContactsCulture();
 
-        emailPromise = getEmail();
-        emailPromise.then(function (json){
+        // Waits for the message
+        messagePromise.then(function (json){
 
             var item = json.Envelope.Body.GetItemResponse.ResponseMessages.GetItemResponseMessage.Items;
 
             if (item.MeetingRequest){
 
-                email = item.MeetingRequest;
+                message = item.MeetingRequest;
                 type = MEETING_REQUEST;
 
             } else if (item.CalendarItem){
 
-                email = item.CalendarItem;
+                message = item.CalendarItem;
                 type = CALENDAR_ITEM;
 
             }
+        });
+        
+        // Waits for the contacts culture
+        contactsCulturePromise.then(function (contacts){
+
+            contacts.forEach(function (contact){
+                console.log(contact.Items.Contact.DisplayName.__text);
+            });
+            
+        });
+        
+        // Waits for the contacts culture (testing, WIP)
+        RequestsService.getContactsCulture2().then(function (contacts){
+
+            contacts.forEach(function (contact){
+                console.log(contact.Items.Contact.DisplayName.__text);
+            });
+            
         });
 
         return {
@@ -39,9 +57,8 @@
         };
 
 
-        function getEmail (){
+        function getMessage (){
 
-            var deferred = $q.defer();
             var itemIdDefer = $q.defer();
 
             if (!Office.context.mailbox.item.itemId) {
@@ -52,16 +69,9 @@
 
             } else { itemIdDefer.resolve(Office.context.mailbox.item.itemId); }
 
-            itemIdDefer.promise.then(function (itemId){
-
-                Office.context.mailbox.makeEwsRequestAsync(getRequestEnvelope(
-                    getMessageRequest(itemId)), function (result){
-                    deferred.resolve(x2js.xml_str2json(result.value));
-                });
-
+            return itemIdDefer.promise.then(function (itemId){
+                return RequestsService.getMessage(itemId);
             });
-
-            return deferred.promise;
 
         }
 
@@ -70,10 +80,10 @@
             
             var deferred = $q.defer();
 
-            emailPromise.then(function (){
+            messagePromise.then(function (){
                 deferred.resolve({
-                    from: email.Organizer.Mailbox.Name.__text,
-                    priority: email.Importance.__text
+                    from: message.Organizer.Mailbox.Name.__text,
+                    priority: message.Importance.__text
                 });
             });
 
@@ -86,44 +96,44 @@
 
             var deferred = $q.defer();
 
-            emailPromise.then(function (){
+            messagePromise.then(function (){
 
                 var attendees = { required: [], optional: [] };
                 var locations, subject, description;
 
                 // Split the locations
-                if (email.Location.__text && email.Location.__text !== ''){
-                    locations = email.Location.__text.split(';');
+                if (message.Location.__text && message.Location.__text !== ''){
+                    locations = message.Location.__text.split(';');
                 } else {
                     locations = [];
                 }
 
                 // Gets the subject, if exists
-                if (email.Subject){ subject = email.Subject.__text; }
+                if (message.Subject){ subject = message.Subject.__text; }
 
                 // Gets the description inside the body
-                description = getDescription(email.Body.__text);
+                description = getDescription(message.Body.__text);
 
                 // Get the required attendees names and store them
-                if (email.RequiredAttendees){ attendees.required = getAttendees(email.RequiredAttendees.Attendee); }
+                if (message.RequiredAttendees){ attendees.required = getAttendees(message.RequiredAttendees.Attendee); }
 
                 // Get the optional attendees names and store them
-                if (email.OptionalAttendees){ attendees.optional = getAttendees(email.OptionalAttendees.Attendee); }
+                if (message.OptionalAttendees){ attendees.optional = getAttendees(message.OptionalAttendees.Attendee); }
 
                 // If the item is a CalendarItem, the organizer is not included in any attendees group. Add him
-                if (type === CALENDAR_ITEM){ attendees.required.push(email.Organizer.Mailbox.__text); }
+                if (type === CALENDAR_ITEM){ attendees.required.push(message.Organizer.Mailbox.__text); }
 
                 deferred.resolve({
-                    organizer: email.Organizer.Mailbox.Name.__text,
+                    organizer: message.Organizer.Mailbox.Name.__text,
                     locations: locations,
                     subject: subject,
-                    online: email.IsOnlineMeeting.__text === 'true',
+                    online: message.IsOnlineMeeting.__text === 'true',
                     description: description,
                     attendees: attendees,
-                    created: new Date(email.DateTimeCreated.__text),
-                    start: new Date(email.Start.__text),
-                    end: new Date(email.End.__text),
-                    recurring: email.IsRecurring.__text === 'true'
+                    created: new Date(message.DateTimeCreated.__text),
+                    start: new Date(message.Start.__text),
+                    end: new Date(message.End.__text),
+                    recurring: message.IsRecurring.__text === 'true'
                 });
 
             });
@@ -137,7 +147,7 @@
 
             var deferred = $q.defer();
 
-            emailPromise.then(function (){
+            messagePromise.then(function (){
                 deferred.resolve(type === MEETING_REQUEST || type === CALENDAR_ITEM);
             });
 
@@ -146,57 +156,18 @@
         }
 
 
-        function getMessageRequest (messageId){
-
-            return  '<GetItem xmlns="http://schemas.microsoft.com/exchange/services/2006/messages">' +
-                    '   <ItemShape>' +
-                    '       <t:BaseShape>IdOnly</t:BaseShape>' +
-                    '       <t:AdditionalProperties>' +
-                    '           <t:FieldURI FieldURI="calendar:Organizer"/>' +
-                    '           <t:FieldURI FieldURI="calendar:Location"/>' +
-                    '           <t:FieldURI FieldURI="calendar:IsOnlineMeeting"/>' +
-                    '           <t:FieldURI FieldURI="calendar:RequiredAttendees"/>' +
-                    '           <t:FieldURI FieldURI="calendar:OptionalAttendees"/>' +
-                    '           <t:FieldURI FieldURI="calendar:Start"/>' +
-                    '           <t:FieldURI FieldURI="calendar:End"/>' +
-                    '           <t:FieldURI FieldURI="calendar:IsRecurring"/>' +
-                    '           <t:FieldURI FieldURI="item:Subject"/>' +
-                    '           <t:FieldURI FieldURI="item:Body"/>' +
-                    '           <t:FieldURI FieldURI="item:DateTimeCreated"/>' +
-                    '           <t:FieldURI FieldURI="item:Importance"/>' +
-                    '       </t:AdditionalProperties>' +
-                    '   </ItemShape>' +
-                    '   <ItemIds><t:ItemId Id="' + messageId + '"/></ItemIds>' +
-                    '</GetItem>';
-
-        }
-
-
-        function getRequestEnvelope (request){
-
-            return  '<?xml version="1.0" encoding="utf-8"?>' +
-                    '<soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"' +
-                    '               xmlns:xsd="http://www.w3.org/2001/XMLSchema"' +
-                    '               xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"' +
-                    '               xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types">' +
-                    '   <soap:Header>' +
-                    '       <t:RequestServerVersion Version="Exchange2013"/>' +
-                    '   </soap:Header>' +
-                    '   <soap:Body>' +
-
-                    request +
-
-                    '   </soap:Body>' +
-                    '</soap:Envelope>';
-
-        }
-
-
         function getDescription (string_body){
 
             var html = new DOMParser().parseFromString(string_body, 'text/html');
-            var description = html.getElementById('divtagdefaultwrapper').textContent;
-            return (description === '\n\n\n') ? undefined : description;
+            var wrapper = html.getElementById('divtagdefaultwrapper');
+            var metas = html.getElementsByTagName('meta');
+            var description;
+
+            // Workaround to get the description from Office and Google meeting requests
+            if (wrapper !== null) description = (wrapper.textContent === '\n\n\n') ? undefined : wrapper.textContent; // Office wrapper
+            else description = (metas[5].content === '') ? undefined : metas[5].content; // Google wrapper
+            
+            return description;
 
         }
 

@@ -2,8 +2,7 @@
 
     'use strict';
 
-    angular.module('officeAddin').controller('ToxicityController',
-        ['toxicityService', toxicityController]);
+    angular.module('OfficeAddin').controller('ToxicityController', ['ToxicityService', toxicityController]);
 
 
     // Application controller

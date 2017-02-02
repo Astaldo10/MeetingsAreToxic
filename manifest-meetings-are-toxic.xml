@@ -29,11 +29,11 @@
       </DesktopSettings>
     </Form>
 
-    <Form xsi:type="ItemEdit">
+    <!-- <Form xsi:type="ItemEdit">
       <DesktopSettings>
        <SourceLocation DefaultValue="https://<server>/"/>
       </DesktopSettings>
-    </Form>
+    </Form> -->
 
   </FormSettings>
 
@@ -41,7 +41,8 @@
 
   <Rule xsi:type="RuleCollection" Mode="Or">
     <Rule xsi:type="ItemIs" ItemType="Message" FormType="Read"/>
-    <Rule xsi:type="ItemIs" ItemType="Appointment" FormType="ReadOrEdit"/>
+    <Rule xsi:type="ItemIs" ItemType="Appointment" FormType="Read"/>
+    <!-- <Rule xsi:type="ItemIs" ItemType="Appointment" FormType="ReadOrEdit"/> -->
   </Rule>
 
   <DisableEntityHighlighting>false</DisableEntityHighlighting>
