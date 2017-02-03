@@ -11,8 +11,8 @@
 
         return {
             getMessage: getMessage,
-            getContactsCulture: getContactsCulture,
-            getContactsCulture2: getContactsCulture2
+            getContactsCultures: getContactsCultures,
+            getContactsCultures2: getContactsCultures2
         };
 
 
@@ -29,25 +29,60 @@
         }
 
 
-        function getContactsCulture (){
+        function getContactsCultures (){
 
-            return findAllContactsFolder('root').then(function (folder){
+            var deferred = $q.defer();
+
+            findAllContactsFolder('root').then(function (folder){
                 return getAllContactsFolder(folder.id, folder.changeKey);
             }).then(function (items){
                 return getContacts(items);
+            }).then(function (contacts){
+
+                var contactsCultures = [];
+
+                contacts.forEach(function (contact){
+
+                    if (!contactsCultures.includes(contact.Items.Contact.Culture.__text)){
+                        contactsCultures.push(contact.Items.Contact.Culture.__text);
+                    }
+
+                });
+
+                deferred.resolve(contactsCultures);
+
             });
+
+            return deferred.promise;
 
         }
 
 
-        function getContactsCulture2 (){
+        function getContactsCultures2 (){
 
+            var deferred = $q.defer();
             var id = 'AAMkADA1ZjIzMjc4LTNhZWEtNDkxZS1hYzIxLTc1ODU4YzU2MGNiZgAuAAAAAAAf3wyX9YrCTZK1BF94h/QSAQAPhqMY2whET7JH6ZxO59QjAAAM0EwtAAA=';
             var changeKey = 'BwAAABYAAAAPhqMY2whET7JH6ZxO59QjAAAM0Etm';
 
-            return getAllContactsFolder(id, changeKey).then(function (items){
+            getAllContactsFolder(id, changeKey).then(function (items){
                 return getContacts(items);
+            }).then(function (contacts){
+
+                var contactsCultures = [];
+
+                contacts.forEach(function (contact){
+
+                    if (!contactsCultures.includes(contact.Items.Contact.Culture.__text)){
+                        contactsCultures.push(contact.Items.Contact.Culture.__text);
+                    }
+
+                });
+
+                deferred.resolve(contactsCultures);
+
             });
+
+            return deferred.promise;
 
         }
 

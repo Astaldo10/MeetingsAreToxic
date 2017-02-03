@@ -120,28 +120,73 @@ var scoring = (function(){
 
         // Day of week
         var dayOfWeek = event.start.getUTCDay();
-        if (dayOfWeek === 5 || dayOfWeek === 6){ // Saturday or Sunday
+        if (dayOfWeek === 6 || dayOfWeek === 0){ // Saturday or Sunday
             result.factors.push({
                 toxicity: 30,
-                description: 'Who the hell convene sets up a meeting on weekend?'
+                description: 'Who the hell sets up a meeting on weekend?'
             });
         }
 
-        // Work and lunch time
+        // Work time
+        var startWork = new Date(0, 0, 0, 8, 0, 0, 0), endWork = new Date(0, 0, 0, 21, 0, 0, 0), outOfWorkMeetingMinutes,
+            meetingStart = new Date(0, 0, 0, event.start.getHours(), event.start.getMinutes(), event.start.getSeconds(), 0),
+            meetingEnd = new Date(0, 0, 0, event.end.getHours(), event.end.getMinutes(), event.end.getSeconds(), 0);
+
+        if (meetingEnd <= startWork || meetingStart >= endWork){
+            outOfWorkMeetingMinutes = (meetingEnd - meetingStart) / 60000;
+        } else if (meetingStart < startWork && meetingEnd > endWork){
+            outOfWorkMeetingMinutes = ((startWork - meetingStart) + (meetingEnd - endWork)) / 60000;
+        } else if (meetingStart < startWork){
+            outOfWorkMeetingMinutes = (startWork - meetingStart) / 60000;
+        } else if (meetingEnd > endWork){
+            outOfWorkMeetingMinutes = (meetingEnd - endWork) / 60000;
+        }
+
+        if (outOfWorkMeetingMinutes){
+            result.factors.push({
+                toxicity: outOfWorkMeetingMinutes,
+                description: 'People needs to rest (' + outOfWorkMeetingMinutes + ' out of work minutes)'
+            });
+        }
+
+        // Lunch time
+        var lunchStart = new Date(0, 0, 0, 13, 0, 0, 0), lunchEnd = new Date(0, 0, 0, 15, 0, 0, 0), lunchMeetingMinutes;
+        if (meetingStart >= lunchStart && meetingStart < lunchEnd){
+            if (meetingEnd < lunchEnd){ lunchMeetingMinutes = (meetingEnd - meetingStart) / 60000; }
+            else { lunchMeetingMinutes = (lunchEnd - meetingStart) / 60000; }
+        } else if (meetingStart < lunchStart && meetingEnd > lunchStart){
+            if (meetingEnd < lunchEnd){ lunchMeetingMinutes = (meetingEnd - lunchStart) / 60000; }
+            else { lunchMeetingMinutes = (lunchEnd - lunchStart) / 60000; }
+        }
+
+        if (lunchMeetingMinutes){
+            result.factors.push({
+                toxicity: lunchMeetingMinutes,
+                description: 'This is lunch time, not meeting time (' + lunchMeetingMinutes + ' lunch time minutes)'
+            });
+        }
 
         // Subject
-        var subject = event.subject.toLowerCase();
-        if (subject.includes('seguimiento') || subject.includes('follow up')){
-            result.factors.push({
-                toxicity: 30,
-                description: 'Send a god dammit email'
-            });
-        }
 
-        if (subject.length < 3){
+        if (event.subject){
+            var subject = event.subject.toLowerCase();
+            if (subject.includes('seguimiento') || subject.includes('follow up')){
+                result.factors.push({
+                    toxicity: 30,
+                    description: 'Send a god dammit email'
+                });
+            }
+
+            if (subject.length < 3){
+                result.factors.push({
+                    toxicity: 5,
+                    description: 'Short subjects are not very descriptive'
+                });
+            } 
+        } else {
             result.factors.push({
-                toxicity: 5,
-                description: 'Short subjects are not very descriptive'
+                toxicity: 15,
+                description: 'A short subject is better than no subject'
             });
         }
 

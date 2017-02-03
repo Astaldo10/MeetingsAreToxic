@@ -12,7 +12,7 @@
     // Service which controls the data obtention when attending an appointment
     function messageService ($q, RequestsService){
 
-        var message, type, messagePromise = getMessage(), contactsCulturePromise = RequestsService.getContactsCulture();
+        var message, type, messagePromise = getMessage(), contactsCulturesPromise = RequestsService.getContactsCultures();
 
         // Waits for the message
         messagePromise.then(function (json){
@@ -33,22 +33,14 @@
         });
         
         // Waits for the contacts culture
-        contactsCulturePromise.then(function (contacts){
-
-            contacts.forEach(function (contact){
-                console.log(contact.Items.Contact.DisplayName.__text);
-            });
-            
-        });
+        /*contactsCulturesPromise.then(function (cultures){
+            console.log(cultures);  
+        });*/
         
         // Waits for the contacts culture (testing, WIP)
-        RequestsService.getContactsCulture2().then(function (contacts){
-
-            contacts.forEach(function (contact){
-                console.log(contact.Items.Contact.DisplayName.__text);
-            });
-            
-        });
+        /*RequestsService.getContactsCultures2().then(function (cultures){
+            console.log(cultures);            
+        });*/
 
         return {
             getEmailInfo: getEmailInfo,
