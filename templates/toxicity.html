@@ -6,6 +6,10 @@
         <ol id="factors" class="ms-font-l">
             <li ng-repeat="factor in tc.score.factors">{{ factor.description }}: <span>{{ factor.toxicity }} points</span></li>
         </ol>
+        <div id="reject" ng-show="tc.score.toxicity > 30" class="red">
+            <img src="images/reject.png" ng-click="tc.rejectMeeting()">
+            <span class="ms-font-xxl ms-fontWeight-light" ng-click="tc.rejectMeeting()">REJECT FOR TOXIC</span>
+        </div>
     </div>
     <div ng-hide="tc.isAppointment">
         <div id="toxicity" class="ms-font-xxl ms-fontWeight-light green">

@@ -33,6 +33,22 @@ html {
     padding: 20px 40px;
 }
 
+#reject {
+    display: flex;
+    padding: 10px;
+    justify-content: center;
+}
+
+#reject img, #reject span {
+    display: inline-flex;
+    cursor: pointer;
+}
+
+#reject span {
+    margin-left: 10px;
+    color: white;
+}
+
 /* Backgrounds */
 .green {
     background-color: #3bad37;

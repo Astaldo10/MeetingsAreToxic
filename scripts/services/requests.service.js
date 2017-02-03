@@ -12,7 +12,8 @@
         return {
             getMessage: getMessage,
             getContactsCultures: getContactsCultures,
-            getContactsCultures2: getContactsCultures2
+            getContactsCultures2: getContactsCultures2,
+            rejectMeeting: rejectMeeting
         };
 
 
@@ -83,6 +84,13 @@
             });
 
             return deferred.promise;
+
+        }
+
+
+        function rejectMeeting (id, changeKey, toxicity){
+
+            Office.context.mailbox.makeEwsRequestAsync(getRequestEnvelope(rejectMeetingRequest(id, changeKey, toxicity)), function (result){});
 
         }
 
@@ -230,6 +238,20 @@
                             contactsXML +
                     '   </m:ItemIds>' +
                     '</m:GetItem>';
+
+        }
+
+
+        function rejectMeetingRequest (id, changeKey, toxicity){
+
+            return  '<m:CreateItem MessageDisposition="SendAndSaveCopy">' +
+                    '   <m:Items>' +
+                    '       <t:DeclineItem xmlns="http://schemas.microsoft.com/exchange/services/2006/types">' +
+                    '           <t:ReferenceItemId Id="' + id + '" ChangeKey="' + changeKey + '"/>' +
+                    '           <t:Body BodyType="Text" IsTruncated="false">This meeting request has ' + toxicity + ' toxicity points. Due to it, I have to decline it.</t:Body>' +
+                    '       </t:DeclineItem>' +
+                    '   </m:Items>' +
+                    '</m:CreateItem>';
 
         }
 

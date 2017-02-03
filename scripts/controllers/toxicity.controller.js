@@ -15,6 +15,7 @@
         var appointment = {};
         ctrl.score = {};
         ctrl.getBackground = getToxicityBackground;
+        ctrl.rejectMeeting = rejectMeeting;
         ctrl.isAppointment = true;
 
         service.isAppointment().then(function (result){
@@ -32,6 +33,12 @@
             }
         });
 
+
+        function rejectMeeting (){
+
+            service.rejectMeeting(ctrl.score.toxicity);
+
+        }
         
 
         // Gets the toxicity background according to the toxicity level reached

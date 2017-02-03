@@ -45,7 +45,8 @@
         return {
             getEmailInfo: getEmailInfo,
             getAppointmentData: getAppointmentData,
-            isAppointment: isAppointment
+            isAppointment: isAppointment,
+            rejectMeeting: rejectMeeting
         };
 
 
@@ -144,6 +145,15 @@
             });
 
             return deferred.promise;
+
+        }
+
+
+        function rejectMeeting (toxicity){
+
+            messagePromise.then(function (){
+                RequestsService.rejectMeeting(message.ItemId._Id, message.ItemId._ChangeKey, toxicity);
+            });
 
         }
 
